@@ -156,14 +156,12 @@ module.exports = {
     try {
       const TicketData = {
         slot: req.body.slot,
-        name: req.body.name,
-        type: req.body.type,
+        vehicule: req.body.vehicule,
       };
-      const slot = await Slot.findById(req.body.slot);
+      const slot = await Slot.findone(req.body.slot);
       if (!slot) {
         return res.status(404).json({ success: false, error: "No Slot found" });
       } else {
-        console.log("slottttt ", slot);
         slot.available = false;
         slot
           .save()
