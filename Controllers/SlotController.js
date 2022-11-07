@@ -193,7 +193,7 @@ module.exports = {
       } else {
         const slot = await Slot.findById(ticket.slot);
 
-        slot.availablity = true;
+        slot.available = true;
         slot
           .save()
           .then((slot) => console.log(slot))
