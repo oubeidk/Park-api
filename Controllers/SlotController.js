@@ -88,10 +88,17 @@ module.exports = {
           { path: "_id" },
           function (err, populatedFloors) {
             const AvailableVehiculeTypeSlotsByFloor = populatedFloors;
-            return res.status(200).json({
-              success: true,
-              data: AvailableVehiculeTypeSlotsByFloor,
-            });
+            if (!AvailableVehiculeTypeSlotsByFloor) {
+              res.status(500).json({
+                message: "no available slot for that SlotType ",
+                data: null,
+              });
+            } else {
+              res.status(200).json({
+                success: true,
+                data: AvailableVehiculeTypeSlotsByFloor,
+              });
+            }
           }
         );
       });
@@ -185,14 +192,16 @@ module.exports = {
         return res
           .status(404)
           .json({ success: false, error: "No Ticket found" });
-      }
-      const slot = await Slot.findById(ticket.slot);
+      } else {
+        const slot = await Slot.findById(ticket.slot);
 
-      slot.availablity = true;
-      slot
-        .save()
-        .then((slot) => console.log(slot))
-        .catch((err) => res.status(400).json(err));
+        slot.availablity = true;
+        slot
+          .save()
+          .then((slot) => console.log(slot))
+
+          .catch((err) => res.status(400).json(err));
+      }
 
       await ticket.remove();
       return res.status(200).json({

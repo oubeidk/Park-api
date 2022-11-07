@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const SlotSchema = new mongoose.Schema({
   numOfSlot: {
     type: Number,
-    required: [true],
+    required: true,
+    unique: true,
   },
 
   slotType: {
@@ -24,5 +25,18 @@ const SlotSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+SlotSchema.pre("validate", function (next) {
+  var doc = this;
 
-module.exports = mongoose.model("slots", SlotSchema);
+  Slot.findOne({}, null, { sort: { numOfSlot: -1 } }, function (error, latest) {
+    if (error) return next(error);
+    if (!latest) {
+      doc.numOfSlot = 1;
+    } else {
+      doc.numOfSlot = latest.numOfSlot + 1;
+    }
+    next();
+  });
+});
+
+module.exports = Slot = mongoose.model("slots", SlotSchema);
